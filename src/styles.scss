@@ -1,7 +1,7 @@
 // Design tokens. Components use only these variables, so the dark theme is defined here once.
 // --bg is also the system bars' color: keep in sync with theme-color in index.html (status bar, per scheme) and
-// manifest.webmanifest. The manifest can't vary by color scheme and Chrome paints the gesture-navigation bar and the
-// splash screen from it, so it holds the dark --bg: the user's phone is in dark mode.
+// manifest.webmanifest (light colors + `user_preferences.color_scheme_dark`). Chrome bakes the manifest colors into the
+// installed app and paints the gesture-navigation bar and the splash screen with them.
 :root {
   color-scheme: light dark;
 

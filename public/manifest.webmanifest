@@ -5,8 +5,14 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
-  "theme_color": "#1b1714",
-  "background_color": "#1b1714",
+  "theme_color": "#f6f1e9",
+  "background_color": "#f6f1e9",
+  "user_preferences": {
+    "color_scheme_dark": {
+      "theme_color": "#1b1714",
+      "background_color": "#1b1714"
+    }
+  },
   "icons": [
     {
       "src": "icons/icon-72x72.png",
