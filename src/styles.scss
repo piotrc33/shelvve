@@ -1,1 +1,97 @@
-/* You can add global styles to this file, and also import other style files */
+// Design tokens. Components use only these variables, so the dark theme is defined here once.
+// --bg is also the status bar color: keep in sync with theme-color in index.html and manifest.webmanifest.
+:root {
+  color-scheme: light dark;
+
+  --bg: #f6f1e9;
+  --surface: #fffcf7;
+  --surface-sunken: #ebe3d6;
+  --text: #2a241d;
+  --text-muted: #6b6155;
+  --border: #ddd2c3;
+  --hairline: rgb(42 36 29 / 0.08);
+  --shadow: rgb(42 36 29 / 0.12);
+  --accent: #8a4b2a;
+  --on-accent: #ffffff;
+  --error-surface: #f8e1dc;
+  --error-text: #9b2c1c;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Noto Serif', Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1714;
+    --surface: #25201b;
+    --surface-sunken: #2e2822;
+    --text: #efe7dc;
+    --text-muted: #a99d90;
+    --border: #3d352d;
+    --hairline: rgb(255 255 255 / 0.06);
+    --shadow: rgb(0 0 0 / 0.4);
+    --accent: #e0a078;
+    --on-accent: #1b1714;
+    --error-surface: #3d1f19;
+    --error-text: #f2a594;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 1rem/1.5 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  // The app shouldn't feel like a web page: no blue flash on tap, no 300 ms double-tap-zoom delay.
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+  // A long press on a button shouldn't select its label.
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+// Shared page layout, used by every page component.
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: calc(12px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 12px
+    max(16px, env(safe-area-inset-left));
+  background: var(--bg);
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  // Bottom space so the floating "add" button never covers the last row.
+  padding: 8px max(16px, env(safe-area-inset-right)) calc(96px + env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

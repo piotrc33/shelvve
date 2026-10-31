@@ -1,0 +1,49 @@
+<header class="top-bar">
+  <h1>Shelvve</h1>
+  @if (books()?.length) {
+    <span class="count">{{ books()!.length }}</span>
+  }
+</header>
+
+<main class="page">
+  @if (unreadableFiles().length) {
+    <p class="error" role="alert">
+      Nie udało się odczytać: {{ unreadableFiles().join(', ') }}. Czy to na pewno plik EPUB?
+    </p>
+  }
+
+  @if (books(); as books) {
+    @if (books.length === 0) {
+      <div class="empty">
+        <p class="empty-title">Półka jest pusta</p>
+        <p>Dodaj pierwszą książkę z pliku EPUB.</p>
+      </div>
+    } @else {
+      <ul class="shelf">
+        @for (book of books; track book.id) {
+          <li>
+            <a [routerLink]="['/books', book.id]">
+              <app-book-cover [cover]="book.cover" [title]="book.title" />
+              <span class="title">{{ book.title }}</span>
+              @if (book.authors.length) {
+                <span class="authors">{{ book.authors.join(', ') }}</span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  }
+</main>
+
+<input
+  #filePicker
+  type="file"
+  accept=".epub,application/epub+zip"
+  multiple
+  hidden
+  (change)="addFiles(filePicker)"
+/>
+<button type="button" class="add-button" [disabled]="adding()" (click)="filePicker.click()">
+  {{ adding() ? 'Dodaję…' : '+ Dodaj książkę' }}
+</button>

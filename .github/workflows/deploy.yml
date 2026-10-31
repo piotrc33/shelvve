@@ -1,0 +1,41 @@
+# Every push to main: run the unit tests, build, publish to https://piotrc33.github.io/shelvve/
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx ng test --watch=false
+      # The app lives under /shelvve/, not at the domain root.
+      - run: npx ng build --base-href /shelvve/
+      # GitHub Pages has no SPA fallback: an unknown path like /shelvve/books/<id> serves 404.html,
+      # so 404.html is the app itself and the router takes over.
+      - run: cp dist/shelvve/browser/index.html dist/shelvve/browser/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/shelvve/browser
+      - id: deployment
+        uses: actions/deploy-pages@v4

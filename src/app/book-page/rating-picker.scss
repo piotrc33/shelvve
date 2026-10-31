@@ -1,0 +1,30 @@
+.scale {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+}
+
+button {
+  // 44px is the minimum comfortable touch target; ten of them fit a 360px-wide phone with the page gutters.
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 120ms ease-out,
+    color 120ms ease-out,
+    transform 120ms ease-out;
+
+  &.filled {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}

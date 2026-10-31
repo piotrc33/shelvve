@@ -1,13 +1,19 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Shelvve</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Shelvve</title>
+    <base href="/" />
+    <!-- viewport-fit=cover lets the page draw under the status bar; styles.scss pads with safe-area insets. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Keep in sync with --bg in styles.scss. -->
+    <meta name="theme-color" content="#f6f1e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1714" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="manifest" href="manifest.webmanifest" />
+  </head>
+  <body>
+    <app-root></app-root>
+    <noscript>Shelvve potrzebuje włączonego JavaScriptu.</noscript>
+  </body>
 </html>

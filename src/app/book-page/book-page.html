@@ -1,0 +1,55 @@
+<header class="top-bar">
+  <a routerLink="/" class="back" aria-label="Wróć do półki">‹ Półka</a>
+</header>
+
+<main class="page">
+  @if (book.value(); as book) {
+    <section class="summary">
+      <app-book-cover [cover]="book.cover" [title]="book.title" />
+      <div class="details">
+        <h1>{{ book.title }}</h1>
+        @if (book.authors.length) {
+          <p class="authors">{{ book.authors.join(', ') }}</p>
+        }
+        @if (book.year || book.publisher) {
+          <p class="edition">
+            {{ book.year }}
+            @if (book.year && book.publisher) {
+              ·
+            }
+            {{ book.publisher }}
+          </p>
+        }
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        Twoja ocena
+        @if (book.rating) {
+          <span class="rating-value">{{ book.rating }}/10</span>
+        }
+      </h2>
+      <app-rating-picker [rating]="book.rating" (ratingChange)="rate($event)" />
+    </section>
+
+    <section>
+      <h2><label for="thoughts">Przemyślenia</label></h2>
+      <textarea
+        id="thoughts"
+        [value]="book.thoughts"
+        (input)="saveThoughts(thoughtsInput.value)"
+        #thoughtsInput
+        placeholder="Co zostało Ci w głowie po tej książce?"
+      ></textarea>
+      <p class="hint">Zapisuje się samo.</p>
+    </section>
+
+    <button type="button" class="remove" (click)="remove()">Usuń z półki</button>
+  } @else if (!book.isLoading()) {
+    <div class="missing">
+      <p>Nie ma takiej książki na półce.</p>
+      <a routerLink="/">Wróć do półki</a>
+    </div>
+  }
+</main>

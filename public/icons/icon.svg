@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Source of every app icon; regenerate the PNGs with scripts/make-icons.sh.
+       Drawn inside the central 80% circle: launchers crop maskable icons to any shape within it. -->
+  <rect width="512" height="512" fill="#8a4b2a"/>
+  <g fill="#f6f1e9">
+    <rect x="148" y="150" width="52" height="196" rx="6"/>
+    <rect x="212" y="122" width="60" height="224" rx="6"/>
+    <rect x="284" y="166" width="44" height="180" rx="6" transform="rotate(14 306 346)"/>
+    <rect x="132" y="356" width="248" height="16" rx="8"/>
+  </g>
+  <g fill="#8a4b2a" opacity="0.35">
+    <rect x="160" y="178" width="28" height="6" rx="3"/>
+    <rect x="226" y="150" width="32" height="6" rx="3"/>
+  </g>
+</svg>
