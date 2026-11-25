@@ -2,11 +2,12 @@ import { Component, inject, input, resource } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Library } from '../books/library';
 import { BookCover } from '../shared/book-cover';
+import { BookChat } from './book-chat';
 import { RatingPicker } from './rating-picker';
 
 @Component({
   selector: 'app-book-page',
-  imports: [RouterLink, BookCover, RatingPicker],
+  imports: [RouterLink, BookCover, RatingPicker, BookChat],
   templateUrl: './book-page.html',
   styleUrl: './book-page.scss',
 })

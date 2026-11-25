@@ -45,6 +45,10 @@
       <p class="hint">Zapisuje się samo.</p>
     </section>
 
+    <section>
+      <app-book-chat [book]="book" />
+    </section>
+
     <button type="button" class="remove" (click)="remove()">Usuń z półki</button>
   } @else if (!book.isLoading()) {
     <div class="missing">

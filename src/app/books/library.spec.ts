@@ -51,12 +51,30 @@ describe('Library', () => {
     expect((await library.find(id))?.thoughts).toBe('Ocean jako bohater.');
   });
 
-  it('removes a book', async () => {
+  it('removes a book and its chat messages', async () => {
     const { id } = await library.addFromEpub(makeTestEpub({}));
+    await library.addMessage(id, 'user', 'Jaki jest główny motyw?');
 
     await library.remove(id);
 
     expect(await library.find(id)).toBeUndefined();
+    expect(await library.messagesFor(id)).toEqual([]);
+  });
+
+  it('stores and clears chat messages for a book', async () => {
+    const { id } = await library.addFromEpub(makeTestEpub({}));
+
+    await library.addMessage(id, 'user', 'Cześć');
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    await library.addMessage(id, 'model', 'Cześć! O czym porozmawiamy?');
+
+    const messages = await library.messagesFor(id);
+    expect(messages).toHaveLength(2);
+    expect(messages[0].text).toBe('Cześć');
+    expect(messages[1].text).toBe('Cześć! O czym porozmawiamy?');
+
+    await library.clearMessages(id);
+    expect(await library.messagesFor(id)).toEqual([]);
   });
 
   it('lists books newest first', async () => {

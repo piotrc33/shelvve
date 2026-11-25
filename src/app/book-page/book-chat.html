@@ -1,0 +1,102 @@
+<div class="chat-section">
+  <div class="chat-header">
+    <h2>Rozmowa z Gemini</h2>
+
+    @if (showChat()) {
+      <div class="header-actions">
+        @if (hasMessages()) {
+          <button type="button" class="btn-text btn-clear" (click)="clearChat()">Wyczyść</button>
+        }
+        <button
+          type="button"
+          class="btn-text"
+          (click)="editingKey.set(true)"
+          aria-label="Zmień klucz API"
+        >
+          Klucz API
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (!showChat()) {
+    <app-gemini-key-form [canCancel]="gemini.hasApiKey()" (done)="editingKey.set(false)" />
+  } @else {
+    <div class="messages-container" #messagesContainer>
+      @if (showSuggestions()) {
+        <app-chat-suggestions [hasThoughts]="!!book().thoughts.trim()" (picked)="ask($event)" />
+      }
+
+      @for (msg of messages.value() ?? []; track msg.id) {
+        <div
+          class="message-row"
+          [class.user]="msg.role === 'user'"
+          [class.model]="msg.role === 'model'"
+        >
+          <div class="bubble">
+            <div class="sender-label">{{ msg.role === 'user' ? 'Ty' : 'Gemini' }}</div>
+            <p class="message-content">{{ msg.text }}</p>
+          </div>
+        </div>
+      }
+
+      @if (streamingText(); as text) {
+        <div class="message-row model">
+          <div class="bubble">
+            <div class="sender-label">Gemini</div>
+            <p class="message-content">
+              {{ text }}<span class="blinking-cursor" aria-hidden="true">▍</span>
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (errorMessage(); as error) {
+      <div class="error-banner" role="alert">
+        <span>{{ error }}</span>
+        <button
+          type="button"
+          class="btn-close-error"
+          (click)="errorMessage.set(null)"
+          aria-label="Zamknij powiadomienie o błędzie"
+        >
+          ✕
+        </button>
+      </div>
+    }
+
+    <form class="input-form" (submit)="onSubmit($event)">
+      <textarea
+        #inputArea
+        [value]="inputText()"
+        (input)="inputText.set(inputArea.value)"
+        (keydown.enter)="onEnter($event)"
+        rows="1"
+        placeholder="Zapytaj Gemini o tę książkę..."
+        aria-label="Wiadomość do Gemini"
+        [disabled]="isGenerating()"
+      ></textarea>
+
+      @if (isGenerating()) {
+        <button
+          type="button"
+          class="btn-send btn-stop"
+          (click)="stopGeneration()"
+          aria-label="Zatrzymaj generowanie odpowiedzi"
+        >
+          ■
+        </button>
+      } @else {
+        <button
+          type="submit"
+          class="btn-send"
+          [disabled]="!inputText().trim()"
+          aria-label="Wyślij wiadomość"
+        >
+          ▲
+        </button>
+      }
+    </form>
+  }
+</div>

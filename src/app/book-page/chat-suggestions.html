@@ -1,0 +1,13 @@
+<div class="empty-state">
+  <p class="empty-hint">
+    Porozmawiaj o motywach, bohaterach, kontekście literackim lub przedyskutuj swoje przemyślenia.
+  </p>
+
+  <div class="suggestions">
+    @for (suggestion of suggestions(); track suggestion.label) {
+      <button type="button" class="suggestion-chip" (click)="picked.emit(suggestion.prompt)">
+        {{ suggestion.label }}
+      </button>
+    }
+  </div>
+</div>

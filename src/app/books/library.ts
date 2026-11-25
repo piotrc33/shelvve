@@ -4,6 +4,7 @@ import { liveQuery } from 'dexie';
 import { from } from 'rxjs';
 import { Book } from './book';
 import { BooksDatabase } from './books-database';
+import { ChatMessage } from './chat-message';
 import { readEpub } from './epub/read-epub';
 
 /** Tests provide a database with a unique name so they don't share data. */
@@ -48,7 +49,30 @@ export class Library {
     await this.db.books.update(id, { thoughts });
   }
 
+  messagesFor(bookId: string): Promise<ChatMessage[]> {
+    return this.db.messages.where('bookId').equals(bookId).sortBy('createdAt');
+  }
+
+  async addMessage(bookId: string, role: 'user' | 'model', text: string): Promise<ChatMessage> {
+    const message: ChatMessage = {
+      id: crypto.randomUUID(),
+      bookId,
+      role,
+      text,
+      createdAt: Date.now(),
+    };
+    await this.db.messages.add(message);
+    return message;
+  }
+
+  async clearMessages(bookId: string): Promise<void> {
+    await this.db.messages.where('bookId').equals(bookId).delete();
+  }
+
   async remove(id: string): Promise<void> {
-    await this.db.books.delete(id);
+    await this.db.transaction('rw', this.db.books, this.db.messages, async () => {
+      await this.db.messages.where('bookId').equals(id).delete();
+      await this.db.books.delete(id);
+    });
   }
 }

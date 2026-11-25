@@ -1,0 +1,38 @@
+<div class="api-key-box">
+  <p class="api-key-desc">
+    Podaj klucz API Gemini, aby dyskutować o tej książce. Klucz jest zapisywany wyłącznie w pamięci
+    Twojej przeglądarki na tym urządzeniu.
+  </p>
+
+  <div class="api-key-row">
+    <input
+      type="password"
+      placeholder="Wklej klucz API Gemini..."
+      [value]="apiKeyInput()"
+      (input)="apiKeyInput.set(keyInput.value)"
+      #keyInput
+      aria-label="Klucz API Gemini"
+    />
+    <button type="button" class="btn-primary" (click)="save()" [disabled]="!apiKeyInput().trim()">
+      Zapisz
+    </button>
+  </div>
+
+  <div class="api-key-footer">
+    <a
+      href="https://aistudio.google.com/app/apikey"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="link-studio"
+    >
+      Pobierz darmowy klucz z Google AI Studio ↗
+    </a>
+
+    @if (canCancel()) {
+      <div class="edit-key-actions">
+        <button type="button" class="btn-link btn-danger" (click)="remove()">Usuń klucz</button>
+        <button type="button" class="btn-link" (click)="cancel()">Anuluj</button>
+      </div>
+    }
+  </div>
+</div>
