@@ -16,7 +16,8 @@ careful human would. Plain names, small files, no clever abstractions, comments 
   screenshots it). Drive the UI with JS (click, dispatch input/change events) instead of screenshots where possible.
   An EPUB can be fed to the hidden file input with a DataTransfer built from base64 bytes.
 - `npm run test:once` (Vitest + jsdom, ~2 s). Tests sit next to the code as `*.spec.ts`.
-- `ng build` before committing (budgets, template type checks).
+- `npm run lint` (ESLint + angular-eslint readability & a11y rules) and `ng build` (budgets, template type checks)
+  before committing.
 - Deploy = `git push` to main: GitHub Actions tests, builds with `--base-href /shelvve/` and publishes to
   https://piotrc33.github.io/shelvve/ (public repo piotrc33/shelvve). The installed app shows "Jest nowa wersja" and
   reloads on tap.
@@ -42,67 +43,51 @@ Backup export/import · LLM chat about my library (provider and where the API ke
 built from ratings and thoughts · recommendations · share EPUBs into the app from other apps (Web Share Target).
 
 ## Skills
-`.claude/skills/` holds design skills from github.com/emilkowalski/skills (mobile-native, break-ui, emil-design-eng,
-animate, review-animations, animation-performance). They mention React/Framer Motion: apply the principles in Angular
-and plain CSS, never add React libraries.
+- `.claude/skills/review-readability/`: post-implementation readability & anti-abstraction checklist tailored to this
+  project. Run it on `git diff` before wrapping up any non-trivial change.
+- `.claude/skills/` also holds design skills from github.com/emilkowalski/skills (mobile-native, break-ui,
+  emil-design-eng, animate, review-animations, animation-performance). They mention React/Framer Motion: apply the
+  principles in Angular and plain CSS, never add React libraries.
 
----
-You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+## Readability & Style
+Gold-standard examples in this repo: `src/app/books/epub/read-epub.ts` (top-down outline + pure helpers),
+`src/app/book-page/book-page.ts`, and `src/app/books/library.ts`. Match their feel.
 
-## TypeScript Best Practices
+- **Top-down "table of contents"**: keep entry functions and methods short so they read like an outline; put detailed
+  steps (parsing, filtering, error mapping, stream decoding) in named pure functions below in the same file. This also
+  keeps logic easy to unit-test in Vitest without `TestBed`.
+- **Component state without extra layers**: keep view state (`signal`, `computed`, `resource`) directly in the
+  component. Do NOT add a local `ViewStore` or facade service for a single view.
+- **No flag-driven mega-components**: prefer two flat, straight-line components (e.g. `AddBookSheet` and
+  `EditBookSheet`) over one component switching on `mode: 'add' | 'edit'` / `isEdit`. Share only genuinely identical
+  inner form pieces when needed.
+- **Focused templates & subcomponents**: when a template mixes distinct concerns (e.g. API-key setup + chat stream),
+  extract subcomponents so the parent template reveals its layout in one glance.
+- **Separate files by default**: use separate `.ts`, `.html`, and `.scss` files whenever `.ts` has its own logic (even
+  if the HTML is 5 lines). Inline `template` (and `styles`) ONLY when the `.ts` class would otherwise be practically
+  empty (just `@Component` + 1–2 `input()`/`output()`, no real logic).
+- **Readable transforms**: prefer declarative steps over imperative loops, but avoid hard-to-scan `.reduce()` calls
+  that mutate an accumulator object; split multi-step transforms into named pure functions. Destructure input objects
+  in parameters when it cuts repetitive `raw.x` noise.
+- **Errors**: throw `Error` (or a small domain subclass like `NotAnEpubError`) and catch at the UI boundary. Do NOT
+  wrap expected failures in `{ ok: true } | { ok: false }` Result objects.
+- **Maximum TypeScript inference**: strict mode, never `any` (use `unknown` when uncertain). Omit `: void`, obvious
+  `: Promise<...>` return types, and local variable types whenever TS infers them safely. Keep explicit types on
+  parameters, domain models, and empty `signal<T>()` / `input<T>()`.
+- **Plain, descriptive names over comments**: use clear, everyday English names (avoid obscure jargon like `clamp` —
+  prefer `limitRating` / `normalizeRating`). Add comments only for a non-obvious "why" (browser quirk, memory rule,
+  product decision) that a name cannot convey.
+- **Simplify pass before done**: after tests pass, review `git diff` (using `review-readability`) to flatten needless
+  indirection, break up long methods/templates, and drop unused signals, `viewChild` refs, or imports.
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
-
-## Angular Best Practices
-
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
-- Do NOT set `changeDetection: ChangeDetectionStrategy.OnPush` explicitly. `OnPush` is the default in Angular v22+.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
-
-## Accessibility Requirements
-
-- It MUST pass all AXE checks.
-- It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
-
-## Components
-
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `model()` for two-way bound properties with `[(prop)]` syntax instead of pairing `input()` with `output()`
-- Use `computed()` for derived state
-- Use `linkedSignal()` for state derived from multiple reactive sources that must stay synchronized
-- Prefer inline templates for small components
-- Prefer Signal Forms (`@angular/forms/signals`) for new forms. They are stable in Angular v22+ and provide signal-based state, type-safe field access, and schema-based validation
-- When not using Signal Forms, prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-- Do NOT import `CommonModule`, import only the directives and pipes the template uses, such as `AsyncPipe` or `DatePipe`
-- When using external templates/styles, use paths relative to the component TS file.
-
-## State Management
-
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
-
-## Templates
-
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Do not assume globals like (`new Date()`) are available.
-
-## Services
-
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Prefer the `@Service` decorator over `@Injectable({providedIn: 'root'})` for new singleton services (Angular v22+)
-- Use the `inject()` function instead of constructor injection
+## Angular 22 & Accessibility
+- Standalone and `OnPush` are defaults in Angular 20+/22+: do NOT set `standalone: true` or
+  `changeDetection: ChangeDetectionStrategy.OnPush`.
+- Use `inject()`, `@Service()` for root singletons, lazy-loaded feature routes, and signal APIs (`signal`, `computed`,
+  `linkedSignal`, `resource`, `input()`, `output()`, `model()`). Update signals with `set`/`update`, never `mutate`.
+- Put host bindings in the decorator's `host` object (never `@HostBinding`/`@HostListener`).
+- Use native control flow (`@if`, `@for`, `@switch`), `[class.*]`/`[style.*]` bindings (never `ngClass`/`ngStyle`),
+  and import only the directives/pipes used (never `CommonModule`). Use relative paths for `templateUrl`/`styleUrl`.
+- Prefer Signal Forms (`@angular/forms/signals`) for new forms; otherwise Reactive Forms (not template-driven).
+- Use `NgOptimizedImage` for static images (not inline base64). Do not assume globals like `new Date()` in templates.
+- Meet WCAG AA minimums (contrast, focus management, ARIA) and pass AXE checks.

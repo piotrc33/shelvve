@@ -5,6 +5,7 @@
     "start": "ng serve",
     "phone": "scripts/phone.sh",
     "build": "ng build",
+    "lint": "eslint src",
     "test": "ng test",
     "test:once": "ng test --watch=false",
     "icons": "scripts/make-icons.sh"
@@ -28,10 +29,14 @@
     "@angular/build": "^22.2.5",
     "@angular/cli": "^22.2.5",
     "@angular/compiler-cli": "^22.2.0",
+    "@eslint/js": "^10.0.1",
+    "angular-eslint": "^22.8.0",
+    "eslint": "^10.15.0",
     "fake-indexeddb": "^6.2.7",
     "jsdom": "^30.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
+    "typescript-eslint": "^8.74.0",
     "vitest": "^5.0.0"
   }
 }
